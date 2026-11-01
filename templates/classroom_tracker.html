@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-head">
+    <div>
+        <h1>Classroom Tracker</h1>
+        <p>Find a free classroom for studying, meetings and group projects.</p>
+    </div>
+</div>
+{% if user and user["role"] == "admin" %}
+<div class="panel">
+    <h2>Admin Controls</h2>
+    <p>Manage classroom schedules and availability.</p>
+
+    <a href="{{ url_for('admin_classroom_timetable') }}"
+       class="button primary">
+        Manage Classroom Availability →
+    </a>
+</div>
+{% endif %}
+
+<div class="panel">
+    <h2>Select Your Block</h2>
+    <p>Choose a block to check classroom availability.</p>
+
+    <div class="classroom-blocks">
+        <a href="{{ url_for('classroom_availability') }}" class="button">
+            Block 1 — Available
+        </a>
+
+        <button class="button" type="button" disabled>
+            Block 2 — Coming Soon
+        </button>
+
+        <button class="button" type="button" disabled>
+            Block 3 — Coming Soon
+        </button>
+    </div>
+</div>
+{% endblock %}

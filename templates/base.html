@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}Campcore{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body>
+
+<header class="topbar">
+
+   <a class="brand" href="{{ url_for('home') }}">
+    <span class="brand-symbol">c<span>.</span></span>
+    <span class="brand-name">campcore</span>
+</a>
+
+
+    <nav>
+
+        {% if current_user %}
+
+            <span class="nav-user">
+                {{ current_user.name }}
+                <small>{{ current_user.role }}</small>
+            </span>
+
+            <a class="nav-link"
+               href="{{ url_for('settings') }}">
+                Settings
+            </a>
+
+            <a class="nav-cta"
+               href="{{ url_for('logout') }}">
+                Log out
+            </a>
+
+        {% else %}
+
+            <a class="nav-link"
+               href="{{ url_for('login') }}">
+                Log in
+            </a>
+
+            <a class="nav-cta"
+               href="{{ url_for('register') }}">
+                Get Started
+            </a>
+
+        {% endif %}
+
+    </nav>
+
+</header>
+
+
+<main class="page">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            <div class="alerts">
+
+                {% for category, message in messages %}
+
+                    <div class="alert {{ category }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    {% block content %}{% endblock %}
+
+</main>
+
+
+<footer class="site-footer">
+
+    <div>
+        <b>CAMPCORE</b>
+        <span>·</span>
+        YOUR CAMPUS, YOUR WORLD.
+    </div>
+
+    <small>Made for campus life.</small>
+
+</footer>
+
+
+<script>
+
+(function () {
+
+    let savedTheme =
+        localStorage.getItem("campcore-theme") || "light";
+
+    document.documentElement.dataset.theme = savedTheme;
+
+    const button = document.getElementById("theme-toggle");
+
+    function updateButton() {
+
+        if (!button) return;
+
+        button.textContent = savedTheme === "dark"
+            ? "Switch to light mode"
+            : "Switch to dark mode";
+
+    }
+
+    updateButton();
+
+    if (button) {
+
+        button.addEventListener("click", function () {
+
+            savedTheme =
+                savedTheme === "dark" ? "light" : "dark";
+
+            document.documentElement.dataset.theme = savedTheme;
+
+            localStorage.setItem("campcore-theme", savedTheme);
+
+            updateButton();
+
+        });
+
+    }
+
+})();
+
+</script>
+
+
+</body>
+
+</html>

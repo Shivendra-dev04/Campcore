@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Report an Item · Campcore{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-head">
+    <div>
+        <div class="eyebrow">CAMPUS COMMUNITY</div>
+        <h1>Report an Item</h1>
+        <p class="muted-text">
+            Help someone find something they've lost.
+        </p>
+    </div>
+</div>
+
+<div class="bus-card" style="max-width:650px; margin:auto;">
+
+    <form method="POST"
+          enctype="multipart/form-data"
+          action="{{ url_for('report_lost_item') }}">
+
+        <label for="item_name">Item name *</label>
+        <input
+            type="text"
+            id="item_name"
+            name="item_name"
+            placeholder="e.g. Black wallet"
+            maxlength="100"
+            required
+        >
+
+        <br><br>
+
+        <label for="description">Description *</label>
+        <textarea
+            id="description"
+            name="description"
+            placeholder="Describe the item..."
+            maxlength="1000"
+            rows="4"
+            required
+        ></textarea>
+
+        <br><br>
+
+        <label for="bus_number">Bus number *</label>
+        <select id="bus_number" name="bus_number" required>
+            <option value="">Select your bus</option>
+
+            {% for bus in buses %}
+            <option value="{{ bus.bus_number }}">
+                {{ bus.bus_number }}
+            </option>
+            {% endfor %}
+
+        </select>
+
+        <br><br>
+
+        <label for="date_found">Date found *</label>
+        <input
+            type="date"
+            id="date_found"
+            name="date_found"
+            required
+        >
+        <br><br>
+
+<label for="collection_location">Where is the item currently kept? *</label>
+
+<input
+    type="text"
+    id="collection_location"
+    name="collection_location"
+    placeholder="e.g. Security office near Gate 2"
+    maxlength="200"
+    required
+>
+
+<p class="muted-text">
+    Mention a campus location where the owner can collect the item.
+</p>
+
+        <br><br>
+
+        <label for="photo">Item photo (optional)</label>
+
+        <input
+            type="file"
+            id="photo"
+            name="photo"
+            accept="image/jpeg,image/png,image/webp"
+            capture="environment"
+        >
+
+        <p class="muted-text">
+            You can take a photo using your camera or select one from your gallery.
+            Maximum size: 5 MB.
+        </p>
+
+        <br>
+
+        <button type="submit" class="btn btn-primary">
+            Publish Report
+        </button>
+
+        <a href="{{ url_for('lost_found') }}" class="btn">
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}

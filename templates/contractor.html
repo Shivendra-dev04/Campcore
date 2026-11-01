@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block title %}Contractor dashboard · Campcore{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-head">
+    <div>
+        <div class="eyebrow">CONTRACTOR DASHBOARD</div>
+        <h1>Your assigned buses</h1>
+        <p class="muted-text">Choose a bus, update its details and publish once.</p>
+    </div>
+    <div class="count-chip">{{ buses|length }} assigned</div>
+</div>
+
+{% if buses %}
+<div class="contractor-list">
+
+{% for bus in buses %}
+<details class="manage-card" {% if loop.first %}open{% endif %}>
+
+    <summary>
+        <div>
+            <span class="bus-number">BUS {{ bus.bus_number }}</span>
+            <b>{{ bus.destination or "No update published" }}</b>
+            <small>
+                {{ bus.parking or "Parking not set" }}
+                {% if bus.departure_at %}
+                    · Departs at {{ bus.departure_at|clock }}
+                {% endif %}
+            </small>
+        </div>
+        <span class="edit-label">Update details ＋</span>
+    </summary>
+
+    <form class="update-form" method="post"
+          action="{{ url_for('update_bus',bus_id=bus.id) }}">
+
+        <div class="form-grid">
+
+            <!-- DESTINATION -->
+            <div>
+                <label>Destination</label>
+
+                <select name="destination" required
+                        onchange="toggleOther(this, 'destination-other-{{ bus.id }}')">
+
+                    <option value="">Select destination</option>
+
+                    {% for d in destinations %}
+                    {% if d.label != "Other" %}
+                    <option value="{{ d.label }}"
+                        {% if bus.destination == d.label %}selected{% endif %}>
+                        {{ d.label }}
+                    </option>
+                    {% endif %}
+                    {% endfor %}
+
+                    <option value="Other">Other</option>
+                </select>
+
+                <input
+    type="text"
+    id="destination-other-{{ bus.id }}"
+    name="destination_other"
+    value="{{ bus.destination if bus.destination and bus.destination not in destinations|map(attribute='label')|list else '' }}"
+    placeholder="Enter different destination"
+    style="display:none; margin-top:10px;"
+>
+            </div>
+
+            <!-- PARKING -->
+            <div>
+                <label>Parking location</label>
+
+                <select name="parking" required
+                        onchange="toggleOther(this, 'parking-other-{{ bus.id }}')">
+
+                    <option value="">Select parking location</option>
+
+                    {% for p in parking %}
+                    {% if p.label != "Other" %}
+                    <option value="{{ p.label }}"
+                        {% if bus.parking == p.label %}selected{% endif %}>
+                        {{ p.label }}
+                    </option>
+                    {% endif %}
+                    {% endfor %}
+
+                    <option value="Other">Other</option>
+                </select>
+
+                <input
+    type="text"
+    id="parking-other-{{ bus.id }}"
+    name="parking_other"
+    value="{{ bus.parking if bus.parking and bus.parking not in parking|map(attribute='label')|list else '' }}"
+    placeholder="Enter parking location"
+    style="display:none; margin-top:10px;"
+>
+            </div>
+
+        </div>
+
+        <label>When will the bus leave?</label>
+
+        <div class="time-options">
+            <label><input type="radio" name="departure" value="now" required><span>Leaving now</span></label>
+            <label><input type="radio" name="departure" value="5"><span>5 min</span></label>
+            <label><input type="radio" name="departure" value="10"><span>10 min</span></label>
+            <label><input type="radio" name="departure" value="15"><span>15 min</span></label>
+            <label><input type="radio" name="departure" value="30"><span>30 min</span></label>
+        </div>
+
+        <div class="custom-time">
+            <label for="time-{{ bus.id }}">Or choose exact time</label>
+
+            <input
+                id="time-{{ bus.id }}"
+                type="datetime-local"
+                name="custom_time"
+                onchange="document.getElementById('custom-{{ bus.id }}').checked=true"
+            >
+
+            <input
+                class="hidden-radio"
+                id="custom-{{ bus.id }}"
+                type="radio"
+                name="departure"
+                value="custom"
+            >
+        </div>
+
+        <button class="button primary">
+    {% if bus.destination %}
+        Update bus information
+    {% else %}
+        Publish new update
+    {% endif %}
+    <span>→</span>
+</button>
+
+        <p class="form-note">
+            Students will see the new information after you publish.
+        </p>
+
+    </form>
+</details>
+{% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="empty-state">
+    <h2>No buses assigned yet</h2>
+    <p>Ask your Campcore admin to assign a bus to your account.</p>
+</div>
+
+{% endif %}
+
+<script>
+function toggleOther(select, inputId) {
+    const input = document.getElementById(inputId);
+
+    if (select.value === "Other") {
+        input.style.display = "block";
+        input.required = true;
+    } else {
+        input.style.display = "none";
+        input.required = false;
+        input.value = "";
+    }
+}
+</script>
+
+{% endblock %}

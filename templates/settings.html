@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% block title %}Settings · Campcore{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-head">
+    <div>
+        <div class="eyebrow">ACCOUNT</div>
+        <h1>Settings</h1>
+        <p class="muted-text">Manage your profile, password and preferences.</p>
+    </div>
+    <div class="count-chip">{{ user.role|title }}</div>
+</div>
+
+
+<div class="admin-grid">
+
+    <!-- PROFILE SETTINGS -->
+
+    <section class="panel">
+        <div class="panel-heading">
+            <div>
+                <div class="eyebrow">PERSONAL INFORMATION</div>
+                <h2>Edit profile</h2>
+            </div>
+        </div>
+
+        <form method="POST" action="{{ url_for('settings') }}">
+
+            <input type="hidden" name="action" value="profile">
+
+            <label>Username / Name</label>
+            <input
+                type="text"
+                name="name"
+                value="{{ user.name }}"
+                required
+            >
+
+            <label>Email address</label>
+            <input
+                type="email"
+                value="{{ user.email }}"
+                disabled
+            >
+
+            {% if user.role == 'student' %}
+    <label>Where do you live?</label>
+    <input
+        type="text"
+        name="location"
+        value="{{ user.location or '' }}"
+        placeholder="Enter your location"
+    >
+{% endif %}
+
+            <label>Phone number (optional)</label>
+            <input
+                type="tel"
+                name="phone"
+                value="{{ user.phone or '' }}"
+                placeholder="Enter phone number"
+            >
+
+            <button class="button primary full">
+                Save profile
+            </button>
+
+        </form>
+    </section>
+
+
+    <!-- PASSWORD SETTINGS -->
+
+    <section class="panel">
+        <div class="panel-heading">
+            <div>
+                <div class="eyebrow">SECURITY</div>
+                <h2>Change password</h2>
+            </div>
+        </div>
+
+        <form method="POST" action="{{ url_for('settings') }}">
+
+            <input type="hidden" name="action" value="password">
+
+            <label>Current password</label>
+            <input
+                type="password"
+                name="current_password"
+                required
+            >
+
+            <label>New password</label>
+            <input
+                type="password"
+                name="new_password"
+                minlength="8"
+                required
+            >
+
+            <label>Confirm new password</label>
+            <input
+                type="password"
+                name="confirm_password"
+                minlength="8"
+                required
+            >
+
+            <button class="button primary full">
+                Update password
+            </button>
+
+        </form>
+    </section>
+
+</div>
+
+
+<!-- APPEARANCE SETTINGS -->
+
+<section class="panel">
+    <div class="eyebrow">PREFERENCES</div>
+    <h2>Appearance</h2>
+    <p class="muted-text">Choose how Campcore looks on your device.</p>
+
+    <button
+        type="button"
+        class="button primary"
+        id="theme-toggle"
+    >
+        Switch to dark mode
+    </button>
+</section>
+
+
+<!-- CONTRACTOR CONTACT DIRECTORY -->
+
+<section class="panel table-panel">
+
+    <div class="eyebrow">CONTACT DIRECTORY</div>
+    <h2>Contractor contacts</h2>
+
+    <p class="muted-text">
+        Contact details of active Campcore contractors.
+    </p>
+
+    {% if contractors %}
+
+    <div class="table-wrap">
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Contractor</th>
+                    <th>Phone number</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for contractor in contractors %}
+
+                <tr>
+                    <td>{{ contractor.name }}</td>
+                  <td>
+    {% if contractor.phone %}
+        <a href="tel:{{ contractor.phone }}">
+            {{ contractor.phone }}
+        </a>
+    {% else %}
+        Not provided
+    {% endif %}
+</td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+    </div>
+
+    {% else %}
+
+    <p class="muted-text">No active contractors available.</p>
+
+    {% endif %}
+
+</section>
+
+
+{% endblock %}

@@ -1,0 +1,4 @@
+{% extends "base.html" %}{% block title %}Create account · Campcore{% endblock %}
+{% block content %}<section class="auth-wrap"><div class="auth-card"><div class="eyebrow">GET STARTED</div><h1>Create your account</h1><p class="muted-text">Student accounts can register here. Contractor accounts are created by an admin.</p>
+<form method="post"><label>Full name</label><input name="name" placeholder="Your name" required><label>Email address</label><input type="email" name="email" placeholder="you@college.edu" required><label>Password</label><input type="password" name="password" minlength="8" placeholder="At least 8 characters" required><button class="button primary full">Create account <span>→</span></button></form>
+<p class="auth-bottom">Already registered? <a href="{{ url_for('login') }}">Log in</a></p></div></section>{% endblock %}

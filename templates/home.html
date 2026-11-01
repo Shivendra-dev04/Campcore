@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block title %}Campcore · Your Campus, Your World{% endblock %}
+
+{% block content %}
+
+<!-- ================= HERO SECTION ================= -->
+
+<section class="cinema-hero">
+
+    <div class="hero-background"></div>
+
+    <div class="cinema-content">
+
+        <div class="cinema-tag">
+            <span class="pulse"></span>
+            YOUR CAMPUS PLATFORM
+        </div>
+
+        <h1>
+            YOUR CAMPUS.<br>
+            <span>YOUR WORLD.</span>
+        </h1>
+
+        <p>
+            Everything happening around your campus,
+            brought together in one place.
+        </p>
+
+        <div class="cinema-buttons">
+
+            <a href="#services" class="explore-btn">
+                Explore
+            </a>
+
+            <a href="{{ url_for('register') }}" class="more-button">
+                Create Account
+            </a>
+
+        </div>
+
+        <div class="hero-caption">
+            DISCOVER · CONNECT · EXPLORE
+        </div>
+
+    </div>
+
+    <div class="hero-number">
+        01 / CAMPCORE
+    </div>
+
+</section>
+
+
+<!-- ================= SERVICES SECTION ================= -->
+
+<section class="services-section" id="services">
+
+    <div class="section-heading">
+
+        <div>
+            <span class="section-label">
+                EXPLORE CAMPCORE
+            </span>
+
+            <h2>Made for campus life.</h2>
+        </div>
+
+        <span class="section-count">
+            02 EXPERIENCES
+        </span>
+
+    </div>
+
+
+    <div class="service-grid">
+
+        <!-- BUS TRACKER -->
+
+        <a href="{{ url_for('login') }}"
+           class="service-card bus-service">
+
+            <div class="service-image bus-image">
+
+                <div class="image-overlay"></div>
+
+                <span class="service-number">01</span>
+
+                <div class="service-content">
+
+                    <span class="service-category">
+                        CAMPUS TRANSPORT
+                    </span>
+
+                    <h2>
+                        BUS<br>TRACKER
+                    </h2>
+
+                    <p>
+                        Your ride. Your time.
+                        Never miss a bus update.
+                    </p>
+
+                    <span class="service-link">
+                        EXPLORE BUS TRACKER <b>↗</b>
+                    </span>
+
+                </div>
+
+            </div>
+
+        </a>
+
+
+        <!-- CLASSROOM TRACKER -->
+<!-- CLASSROOM TRACKER -->
+
+<a href="{{ url_for('classroom_tracker') }}"
+   class="service-card classroom-service">
+
+    <div class="service-image classroom-image">
+
+        <div class="image-overlay"></div>
+
+        <span class="service-number">02</span>
+
+        <div class="service-content">
+
+            <span class="service-category">
+                CAMPUS SPACES
+            </span>
+
+            <h2>
+                CLASSROOM<br>TRACKER
+            </h2>
+
+            <p>
+                Find your space.
+                Make room for great ideas.
+            </p>
+
+            <span class="service-link">
+                EXPLORE CLASSROOM TRACKER <b>↗</b>
+            </span>
+
+        </div>
+
+    </div>
+
+</a>
+</section>
+
+
+<!-- ================= LIVE BUS PREVIEW ================= -->
+
+<section class="live-section">
+
+    <div class="section-heading">
+
+        <div>
+
+            <span class="section-label">
+                CAMPUS TRANSPORT
+            </span>
+
+            <h2>What's moving today?</h2>
+
+        </div>
+
+        <span class="live-label">
+            <span class="live-dot"></span>
+            LIVE UPDATES
+        </span>
+
+    </div>
+
+
+    <div class="live-board">
+
+        {% if buses %}
+
+            {% for bus in buses[:3] %}
+
+                <div class="live-bus-row">
+
+                    <div class="live-bus-icon">
+                        ↗
+                    </div>
+
+                    <div class="live-bus-info">
+
+                        <b>
+                            Bus {{ bus.bus_number }}
+                        </b>
+
+                        <span>
+                            {{ bus.destination }} · {{ bus.parking }}
+                        </span>
+
+                    </div>
+
+                    <div class="live-bus-time">
+                        {{ bus.departure_at|departure }}
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+
+            <div class="live-board-footer">
+                {{ active_bus_count }} active bus update(s)
+            </div>
+
+
+        {% else %}
+
+            <div class="live-empty">
+
+                <div class="live-bus-icon">
+                    ↗
+                </div>
+
+                <div>
+
+                    <b>No active buses right now</b>
+
+                    <p>
+                        New updates will appear when contractors
+                        publish their bus information.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="live-board-footer">
+                Waiting for the next update
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+
+<!-- ================= BOTTOM BANNER ================= -->
+
+<section class="bottom-banner">
+
+    <span>
+        BUILT FOR STUDENTS
+    </span>
+
+    <h2>
+        Less confusion.<br>
+        <em>More campus life.</em>
+    </h2>
+
+    <a href="{{ url_for('register') }}">
+        JOIN CAMPCORE ↗
+    </a>
+
+</section>
+
+
+{% endblock %}

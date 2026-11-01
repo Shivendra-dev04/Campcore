@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Classroom Timetable · Admin{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-head">
+    <div>
+        <div class="eyebrow">CAMPUS FACILITIES</div>
+        <h1>Classroom Timetable</h1>
+        <p class="muted-text">
+            Upload the Excel timetable for Block 1.
+        </p>
+    </div>
+
+    <a href="{{ url_for('admin_dashboard') }}" class="button">
+        Back to Admin
+    </a>
+</div>
+
+<section class="panel">
+
+    <h2>Upload Excel Timetable</h2>
+
+    <p class="muted-text">
+        Select your .xlsx timetable file below.
+        Uploading a new file replaces the existing Block 1 timetable.
+    </p>
+
+    <form method="POST"
+          enctype="multipart/form-data"
+          action="{{ url_for('admin_classroom_timetable') }}">
+
+        <label for="timetable">Select Excel File</label>
+
+        <input
+            type="file"
+            id="timetable"
+            name="timetable"
+            accept=".xlsx"
+            required
+        >
+
+        <br><br>
+
+        <button type="submit" class="button primary">
+            Upload Timetable →
+        </button>
+
+    </form>
+
+</section>
+
+<section class="panel">
+
+    <h2>Required Excel Columns</h2>
+
+    <p>Your Excel file must contain these six columns in its first row:</p>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Classroom</th>
+                    <th>Subject</th>
+                    <th>Faculty</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>Monday</td>
+                    <td>09:00</td>
+                    <td>10:00</td>
+                    <td>B1-101</td>
+                    <td>Mathematics</td>
+                    <td>Mr Sharma</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+{% endblock %}

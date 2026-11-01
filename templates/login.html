@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Log in · Campcore{% endblock %}
+
+{% block content %}
+
+<section class="auth-wrap">
+
+    <div class="auth-card">
+
+        <div class="auth-eyebrow">
+            <span class="auth-dot"></span>
+            WELCOME BACK
+        </div>
+
+        <h1>Log in to <span>Campcore.</span></h1>
+
+        <p class="muted-text">
+            Your bus information, all in one place.
+        </p>
+
+        <form method="post">
+            <input type="hidden" name="next" value="{{ next or '' }}">
+
+            <label for="email">Email address</label>
+
+            <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="you@college.edu"
+                required
+            >
+
+            <label for="password">Password</label>
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Your password"
+                required
+            >
+
+            <button type="submit" class="auth-submit">
+                Log in <span>→</span>
+            </button>
+
+        </form>
+
+        <p class="auth-bottom">
+            New to Campcore?
+            <a href="{{ url_for('register') }}">
+                Create a student account →
+            </a>
+        </p>
+
+    </div>
+
+</section>
+
+{% endblock %}

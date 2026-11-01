@@ -1,0 +1,125 @@
+{% extends "base.html" %}{% block title %}Student dashboard · Campcore{% endblock %}
+{% block content %}
+<div class="dashboard-head"><div><div class="eyebrow">STUDENT DASHBOARD</div><h1>Bus notifications</h1><p class="muted-text">The latest published information from active buses.</p></div><div class="count-chip">{{ buses|length }} updates found</div></div>
+<form class="filters" method="get"><div class="searchbox"><span>⌕</span><input name="q" value="{{ search }}" placeholder="Search bus number…"></div><select name="destination"><option value="">All destinations</option>{% for d in destinations %}<option value="{{ d.label }}" {% if selected==d.label %}selected{% endif %}>{{ d.label }}</option>{% endfor %}</select><button class="button dark">Filter</button><a class="clear-link" href="{{ url_for('student_dashboard') }}">Clear</a></form>
+{% if buses %}
+<div class="bus-grid">
+
+    {% for bus in buses %}
+    <article class="bus-card"
+             data-departure="{{ bus.departure_at }}"
+             data-expired="false">
+
+        <div class="card-top">
+            <span class="bus-number">BUS {{ bus.bus_number }}</span>
+            <span class="status current countdown-status">Loading...</span>
+        </div>
+
+        <h2>{{ bus.destination }}</h2>
+
+        <div class="detail-line">
+            <span>⌖</span>
+            <div>
+                <small>PARKING LOCATION</small>
+                <b>{{ bus.parking }}</b>
+            </div>
+        </div>
+
+        <div class="detail-line">
+            <span>◷</span>
+            <div>
+                <small>DEPARTURE TIME</small>
+                <b>{{ bus.departure_at|clock }}</b>
+            </div>
+        </div>
+
+        <div class="card-bottom">
+            Updated {{ bus.created_at|clock }} · by {{ bus.publisher }}
+        </div>
+
+    </article>
+    {% endfor %}
+
+</div>
+{% else %}<div class="empty-state"><div class="empty-icon">⌕</div><h2>No bus updates found</h2><p>Try another bus number or destination. New updates will appear here when published.</p></div>{% endif %}
+<script>
+function updateBusCountdowns() {
+    const buses = document.querySelectorAll(".bus-card");
+
+    buses.forEach(bus => {
+        const departureTime = new Date(bus.dataset.departure);
+        const status = bus.querySelector(".countdown-status");
+
+        if (isNaN(departureTime.getTime())) {
+            status.textContent = "Time unavailable";
+            return;
+        }
+
+        const now = new Date();
+        const difference = departureTime.getTime() - now.getTime();
+        const expiryTime = departureTime.getTime() + (2 * 60 * 1000);
+
+        if (now.getTime() >= expiryTime) {
+            bus.remove();
+            return;
+        }
+
+        if (difference > 60000) {
+            const minutes = Math.ceil(difference / 60000);
+            status.textContent = "Leaving in " + minutes + " minutes";
+            status.classList.remove("expired");
+            status.classList.add("current");
+
+        } else if (difference > 0) {
+            status.textContent = "Leaving now";
+            status.classList.remove("expired");
+            status.classList.add("current");
+
+        } else {
+            status.textContent = "🚌 BUS DEPARTING";
+            status.classList.remove("current");
+            status.classList.add("expired");
+        }
+    });
+
+    const remaining = document.querySelectorAll(".bus-card").length;
+    const countChip = document.querySelector(".count-chip");
+
+    if (countChip) {
+        countChip.textContent = remaining + " updates found";
+    }
+
+    if (remaining === 0 && !document.querySelector(".empty-state")) {
+        const grid = document.querySelector(".bus-grid");
+
+        if (grid) {
+            grid.insertAdjacentHTML("afterend", `
+                <div class="empty-state">
+                    <div class="empty-icon">⌕</div>
+                    <h2>No bus updates found</h2>
+                    <p>New bus updates will appear here when published.</p>
+                </div>
+            `);
+        }
+    }
+}
+
+updateBusCountdowns();
+setInterval(updateBusCountdowns, 1000);
+</script>
+<!-- LOST & FOUND SECTION -->
+
+<div class="dashboard-head" style="margin-top:40px;">
+    <div>
+        <div class="eyebrow">CAMPUS COMMUNITY</div>
+        <h1>Lost & Found</h1>
+        <p class="muted-text">
+            Lost something on a bus? Or found something someone might be looking for?
+        </p>
+    </div>
+
+    <a href="{{ url_for('lost_found') }}" class="button dark">
+        Explore Lost & Found →
+    </a>
+</div>
+{% endblock %}

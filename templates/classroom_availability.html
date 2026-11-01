@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-head">
+    <div>
+        <h1>Block 1 — Classroom Availability</h1>
+        <p>Choose a day and time to find a free classroom.</p>
+    </div>
+    <a href="{{ url_for('classroom_tracker') }}" class="button">
+        Back to Blocks
+    </a>
+</div>
+
+<div class="panel">
+    <h2>Find a Classroom</h2>
+
+    <form method="POST" action="{{ url_for('classroom_availability') }}">
+        <label for="day">Select Day</label>
+        <select name="day" id="day" required>
+            <option value="">Choose a day</option>
+            {% for day in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] %}
+                <option value="{{ day }}">{{ day }}</option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+
+        <label for="start_time">Start Time</label>
+        <input type="time" name="start_time" id="start_time" required>
+
+        <br><br>
+
+        <label for="end_time">End Time</label>
+        <input type="time" name="end_time" id="end_time" required>
+
+        <br><br>
+
+        <button type="submit" class="button">Check Availability</button>
+    </form>
+</div>
+
+{% if searched %}
+<div class="panel">
+    <h2>Available Classrooms</h2>
+
+    {% if free_rooms %}
+        {% for room in free_rooms %}
+            <p>✅ {{ room }}</p>
+        {% endfor %}
+    {% else %}
+        <p>No free classrooms found for this time.</p>
+    {% endif %}
+
+    <hr>
+
+    <h2>Occupied Classrooms</h2>
+
+    {% if occupied_rooms %}
+        {% for room in occupied_rooms %}
+            <p>
+                ❌ <strong>{{ room.classroom }}</strong> —
+                {{ room.subject }} ({{ room.faculty }})
+            </p>
+        {% endfor %}
+    {% else %}
+        <p>No classrooms are occupied during this time.</p>
+    {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}

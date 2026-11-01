@@ -1,0 +1,320 @@
+{% extends "base.html" %}
+{% block title %}Admin dashboard · Campcore{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-head">
+    <div>
+        <div class="eyebrow">ADMIN CONTROL ROOM</div>
+        <h1>Manage Campcore</h1>
+        <p class="muted-text">Create contractor accounts and assign buses.</p>
+    </div>
+    <div class="count-chip">Administrator</div>
+</div>
+
+
+<!-- CREATE CONTRACTOR AND REGISTER BUS -->
+
+<div class="admin-grid">
+
+    <section class="panel">
+        <div class="panel-heading">
+            <div>
+                <div class="eyebrow">TEAM</div>
+                <h2>Add a contractor</h2>
+            </div>
+            <span class="panel-icon">＋</span>
+        </div>
+
+        <form method="post" action="{{ url_for('create_contractor') }}">
+
+            <label>Contractor name</label>
+            <input
+                name="name"
+                placeholder="Full name"
+                required
+            >
+
+            <label>Email</label>
+            <input
+                type="email"
+                name="email"
+                placeholder="contractor@email.com"
+                required
+            >
+
+            <label>Contractor phone number</label>
+            <input
+                type="tel"
+                name="phone"
+                placeholder="Enter contact number"
+            >
+
+            <label>Temporary password</label>
+            <input
+                type="password"
+                name="password"
+                minlength="8"
+                placeholder="At least 8 characters"
+                required
+            >
+
+            <button class="button primary full">
+                Create contractor
+            </button>
+
+        </form>
+    </section>
+
+
+    <section class="panel">
+        <div class="panel-heading">
+            <div>
+                <div class="eyebrow">FLEET</div>
+                <h2>Register a bus</h2>
+            </div>
+            <span class="panel-icon">＋</span>
+        </div>
+
+        <form method="post" action="{{ url_for('create_bus') }}">
+
+            <label>Bus number</label>
+            <input
+                name="bus_number"
+                placeholder="e.g. 04"
+                required
+            >
+
+            <label>Assign contractor</label>
+            <select name="contractor_id" required>
+
+                <option value="">Choose contractor</option>
+
+                {% for c in contractors if c.active %}
+                    <option value="{{ c.id }}">{{ c.name }}</option>
+                {% endfor %}
+
+            </select>
+
+            <button class="button primary full">
+                Register & assign bus
+            </button>
+
+        </form>
+    </section>
+
+</div>
+
+
+<!-- CONTRACTOR MANAGEMENT -->
+
+<section class="panel table-panel">
+
+    <div class="panel-heading">
+        <div>
+            <div class="eyebrow">CURRENT SETUP</div>
+            <h2>Contractors</h2>
+        </div>
+    </div>
+
+    {% if contractors %}
+
+    <div class="table-wrap">
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for c in contractors %}
+
+                <tr>
+                    <td>{{ c.name }}</td>
+                    <td>{{ c.email }}</td>
+
+                    <td>
+                        <span class="status {{ 'current' if c.active else 'expired' }}">
+                            {{ 'Active' if c.active else 'Inactive' }}
+                        </span>
+                    </td>
+
+                    <td>
+                        <form
+                            method="post"
+                            action="{{ url_for('toggle_contractor', user_id=c.id) }}"
+                        >
+                            <button class="small-button">
+                                {{ 'Deactivate' if c.active else 'Activate' }}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+    </div>
+
+    {% else %}
+
+    <p class="muted-text">No contractors added yet.</p>
+
+    {% endif %}
+
+</section>
+
+
+<!-- BUS MANAGEMENT -->
+
+<section class="panel table-panel">
+
+    <div class="panel-heading">
+        <div>
+            <div class="eyebrow">FLEET OVERVIEW</div>
+            <h2>Registered buses</h2>
+        </div>
+    </div>
+
+    {% if buses %}
+
+    <div class="table-wrap">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Bus</th>
+                    <th>Assigned contractor</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for b in buses %}
+
+                <tr>
+                    <td><b>Bus {{ b.bus_number }}</b></td>
+
+                    <td>
+                        {{ b.contractor or 'Not assigned' }}
+                    </td>
+
+                    <td>
+                        <span class="status {{ 'current' if b.active else 'expired' }}">
+                            {{ 'Active' if b.active else 'Inactive' }}
+                        </span>
+                    </td>
+                </tr>
+
+
+                <!-- EDIT BUS FORM -->
+
+                <tr>
+                    <td colspan="3">
+
+                        <details class="manage-card">
+
+                            <summary>
+                                <b>Edit Bus {{ b.bus_number }}</b>
+                                <span class="edit-label">Edit details ＋</span>
+                            </summary>
+
+                            <form
+                                method="POST"
+                                action="{{ url_for('edit_bus', bus_id=b.id) }}"
+                                class="update-form"
+                            >
+
+                                <label>Bus number</label>
+
+                                <input
+                                    type="text"
+                                    name="bus_number"
+                                    value="{{ b.bus_number }}"
+                                    required
+                                >
+
+                                <label>Assign contractor</label>
+
+                                <select name="contractor_id" required>
+
+                                    <option value="">
+                                        Choose contractor
+                                    </option>
+
+                                    {% for contractor in contractors %}
+
+                                        {% if contractor.active %}
+
+                                        <option
+                                            value="{{ contractor.id }}"
+                                            {% if b.contractor == contractor.name %}selected{% endif %}
+                                        >
+                                            {{ contractor.name }}
+                                        </option>
+
+                                        {% endif %}
+
+                                    {% endfor %}
+
+                                </select>
+
+                                <button type="submit" class="button primary">
+                                    Save bus changes →
+                                </button>
+
+                            </form>
+
+                        </details>
+
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+    <p class="muted-text">No buses registered yet.</p>
+
+    {% endif %}
+
+</section>
+<!-- LOST & FOUND MODERATION -->
+
+<section class="panel table-panel">
+
+    <div class="panel-heading">
+        <div>
+            <div class="eyebrow">CAMPUS COMMUNITY</div>
+            <h2>Lost & Found Management</h2>
+        </div>
+        <span class="panel-icon">⌕</span>
+    </div>
+
+    <p class="muted-text">
+        Review student reports, remove inappropriate posts,
+        and manage claimed items.
+    </p>
+
+    <a href="{{ url_for('lost_found') }}" class="button primary">
+        Manage Lost & Found →
+    </a>
+
+</section>
+{% endblock %}
